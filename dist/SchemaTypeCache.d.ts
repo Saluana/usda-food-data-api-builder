@@ -15,6 +15,6 @@ export declare class SchemaTypeCache {
      * @returns Array of SchemaType for the given Schema
      */
     get(index: string, model: mongoose.Model<unknown, any, any, any>): {
-        [key: string]: mongoose.SchemaType;
+        [key: string]: mongoose.SchemaType<any, any>;
     };
 }

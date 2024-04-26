@@ -65,14 +65,10 @@ export default class DocumentManager {
      */
     createModel(data: {
         [key: string]: any;
-    }, schemaName: string): Promise<mongoose.Types.ObjectId | (mongoose.Document<unknown, any, unknown> & {
-        _id: mongoose.Types.ObjectId;
-    })>;
+    }, schemaName: string): Promise<any>;
     buildDocument(data: {
         [key: string]: any;
-    }, schemaName: string): Promise<mongoose.Document<unknown, any, unknown> & {
-        _id: mongoose.Types.ObjectId;
-    }>;
+    }, schemaName: string): Promise<any>;
     /**
      * Handles a non-array field in a raw USDA Food Data Document, turning the
      * raw data into a Document if required.

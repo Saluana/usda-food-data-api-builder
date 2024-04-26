@@ -8,7 +8,7 @@ export class DocumentBatcher {
      * Configures the DocumentBatcher
      * @param limit The number of root level documents to queue
      */
-    constructor(limit = 500) {
+    constructor(limit = 1000) {
         this.count = 0;
         this.cache = {};
         this.lock = false;
@@ -42,18 +42,25 @@ export class DocumentBatcher {
      * Saves and empties the document queue
      */
     async save() {
-        await this.waitForLock();
-        this.lock = true;
-        this.count = 0;
-        let promises = [];
-        for (let n in this.cache) {
-            let docs = this.cache[n];
-            promises.push(mongoose.model(n).insertMany(docs));
+        try {
+            await this.waitForLock();
+            this.lock = true;
+            this.count = 0;
+            let promises = [];
+            for (let n in this.cache) {
+                let docs = this.cache[n];
+                console.log(`Saving ${docs.length} documents to ${n}`);
+                promises.push(mongoose.model(n).insertMany(docs));
+            }
+            this.cache = {};
+            Promise.allSettled(promises).then(() => {
+                this.lock = false;
+            });
         }
-        this.cache = {};
-        Promise.all(promises).then(() => {
+        catch (e) {
             this.lock = false;
-        });
+            console.log("Error saving documents");
+        }
     }
     /**
      * Returns if the object batcher is allowing new entries
